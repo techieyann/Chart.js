@@ -20,6 +20,10 @@ var srcDir = './src/';
  *			- A minified version of this code, in Chart.min.js
  */
 
+function execCallback(error, stdout, stderr) {
+	if (error !== null) console.error(error);
+}
+
 gulp.task('build', function(){
 
 	// Default to all of the chart types, with Chart.Core first
@@ -111,6 +115,21 @@ gulp.task('watch', function(){
 });
 
 gulp.task('test', ['jshint']);
+
+gulp.task('meteor-init', function () {
+	// Meteor expects package.js to be in the root directory
+	// of the checkout, so copy it there temporarily
+	exec('cp meteor/package.js .', execCallback);
+});
+
+gulp.task('meteor-test', ['meteor-init'], function () {
+	exec('node_modules/.bin/spacejam --mongo-url mongodb:// test-packages ./', execCallback);
+	exec('rm -rf .build.* versions.json package.js', execCallback);  // cleanup
+});
+
+gulp.task('meteor-publish', ['meteor-init'], function () {
+	exec('meteor publish && rm -rf .build.* versions.json package.js', execCallback);
+});
 
 gulp.task('size', ['library-size', 'module-sizes']);
 
