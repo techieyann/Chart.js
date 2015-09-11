@@ -68,6 +68,9 @@
 			// Boolean - Whether to show labels on the scale
 			scaleShowLabels: true,
 
+      // Boolean - Omit x-axis labels
+      omitXLabels: true,
+      
 			// Interpolated JS string - can access value
 			scaleLabel: "<%=value%>",
 
@@ -157,7 +160,6 @@
 
 			// Function - Will fire on animation completion.
 			onAnimationComplete: function(){}
-
 		}
 	};
 
@@ -2123,7 +2125,14 @@
 				});
 				return values;
 			};
-
+      //if omitting x labels, replace labels with empty strings           
+      if(Chart.defaults.global.omitXLabels){
+        var newLabels=[];
+        for(var i=0;i<labels.length;i++){
+          newLabels.push('');
+        }
+        labels=newLabels;
+      }
 			var scaleOptions = {
 				templateString : this.options.scaleLabel,
 				height : this.chart.height,
